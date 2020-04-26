@@ -1,8 +1,14 @@
 #include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
+
 
 #include <raylib.h>
 #include <raymath.h>
+
 #include "stb_ds.h"
+
 
 /* some useful global constants */
 #define VEC2_DOWN   ((Vector2) {  0.f,  1.f })
@@ -10,12 +16,16 @@
 #define VEC2_LEFT   ((Vector2) { -1.f,  0.f })
 #define VEC2_RIGHT  ((Vector2) {  1.f,  0.f })
 
-/* project source files */
-/* #include "something.c" */
 
+/* game specific global constants */ 
 #define GAME_TITLE "puffin game"
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
+
+
+/* project source files */
+/* #include "something.c" */
+
 
 int main(void)
 {
