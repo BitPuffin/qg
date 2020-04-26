@@ -18,42 +18,114 @@
 
 
 /* game specific global constants */ 
-#define GAME_TITLE "puffin game"
+#define GAME_TITLE "puffong"
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 
+#define PADDLE_WIDTH 32
+#define PADDLE_HEIGHT 128
+#define INSET 10.f
+#define PLAYER_X INSET
+#define MIN_Y INSET
+#define MAX_Y (SCREEN_HEIGHT - (PADDLE_HEIGHT + INSET))
+#define ENEMY_X SCREEN_WIDTH - (INSET + PADDLE_WIDTH)
+
+#define BALL_SIZE 16
 
 /* project source files */
 /* #include "something.c" */
 
+float randfloat()
+{
+	float a = (float)rand();
+	float b = (float)RAND_MAX;
+	return a / b;
+}
+
+static Vector2 constrain_paddle(Vector2 v)
+{
+	v.y = fmin(v.y, MAX_Y);
+	v.y = fmax(v.y, MIN_Y);
+	return v;
+}
 
 int main(void)
 {
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, GAME_TITLE);
 
-	Vector2 pos = {};
-	Vector2 size = { 40.f, 40.f };
-	Color color = PURPLE;
+	Vector2 pos = { PLAYER_X, SCREEN_HEIGHT / 2.f };
+	Vector2 enemypos = { ENEMY_X, SCREEN_HEIGHT / 2.f} ;
+	
+	Vector2 ballpos = {
+		SCREEN_WIDTH / 2.f - BALL_SIZE / 2.f,
+		SCREEN_HEIGHT / 2.f - BALL_SIZE / 2.f,
+	};
+	Vector2 ballvel = {
+		-500.f,
+		randfloat() * 10.f * 100.f,
+	};
 
 	SetTargetFPS(144);
 
 	while (!WindowShouldClose())
 	{
 		/* update */
-		pos = GetMousePosition();
+		Vector2 mousepos = GetMousePosition();
+		pos.y = mousepos.y - PADDLE_HEIGHT / 2.f;
+		pos = constrain_paddle(pos);
 
-		if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) color = PURPLE;
-		else if (IsMouseButtonPressed(MOUSE_MIDDLE_BUTTON)) color = YELLOW;
-		else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) color = DARKBLUE;
+		enemypos.y = pos.y;
+
+		Vector2 ballup = Vector2Scale(ballvel, GetFrameTime());
+		ballpos = Vector2Add(ballpos, ballup);
+		if (ballpos.y < INSET) {
+			ballvel.y = -ballvel.y;
+		} else if (ballpos.y > SCREEN_HEIGHT - INSET) {
+			ballvel.y = -ballvel.y;
+		}
+		if (ballpos.x < PLAYER_X + PADDLE_WIDTH && ballpos.x > PLAYER_X + PADDLE_WIDTH / 2.f) {
+			Rectangle pr = {
+				.x = pos.x,
+				.y = pos.y,
+				.width = PADDLE_WIDTH,
+				.height = PADDLE_HEIGHT,
+			};
+			Rectangle br = {
+				.x = ballpos.x,
+				.y = ballpos.y,
+				.width = BALL_SIZE,
+				.height = BALL_SIZE,
+			};
+			if (CheckCollisionRecs(pr, br)) {
+				ballvel = Vector2Negate(ballvel);
+			}
+		} else if (ballpos.x > ENEMY_X && ballpos.x < ENEMY_X + PADDLE_WIDTH / 2.f) {
+			Rectangle er = {
+				.x = enemypos.x,
+				.y = enemypos.y,
+				.width = PADDLE_WIDTH,
+				.height = PADDLE_HEIGHT,
+			};
+			Rectangle br = {
+				.x = ballpos.x,
+				.y = ballpos.y,
+				.width = BALL_SIZE,
+				.height = BALL_SIZE,
+			};
+			if (CheckCollisionRecs(er, br)) {
+				ballvel = Vector2Negate(ballvel);
+			}
+		}
+
 
 		/* draw */
 		BeginDrawing();
 
 		ClearBackground(RAYWHITE);
 
-		DrawRectangleV(pos, size, color);
-
-		DrawText("welcome to " GAME_TITLE, 10, 10, 20, BLACK);
+		DrawRectangle(pos.x, pos.y, PADDLE_WIDTH, PADDLE_HEIGHT, BLACK);
+		DrawRectangle(enemypos.x, enemypos.y, PADDLE_WIDTH, PADDLE_HEIGHT, BLACK);
+		DrawRectangle(ballpos.x, ballpos.y, BALL_SIZE, BALL_SIZE, BLACK);
 
 		EndDrawing();
 	}
