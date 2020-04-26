@@ -1,3 +1,3 @@
 #!/bin/sh
 
-tcc -ogame main.c -lraylib
+cc -g -ogame main.c -lraylib

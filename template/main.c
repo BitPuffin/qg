@@ -1,6 +1,14 @@
 #include <stdio.h>
 
 #include <raylib.h>
+#include <raymath.h>
+#include "stb_ds.h"
+
+/* some useful global constants */
+#define VEC2_DOWN   ((Vector2) {  0.f,  1.f })
+#define VEC2_UP     ((Vector2) {  0.f, -1.f })
+#define VEC2_LEFT   ((Vector2) { -1.f,  0.f })
+#define VEC2_RIGHT  ((Vector2) {  1.f,  0.f })
 
 /* project source files */
 /* #include "something.c" */
@@ -44,3 +52,6 @@ int main(void)
 
 	return 0;
 }
+
+#define STB_DS_IMPLEMENTATION
+#include "stb_ds.h"
