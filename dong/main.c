@@ -65,6 +65,7 @@ Vector2 ballpos;
 Vector2 ballvel;
 
 int bouncecount;
+int bouncerecord = 0;
 
 void reset_state()
 {
@@ -80,7 +81,7 @@ void reset_state()
 		SCREEN_HEIGHT / 2.f - BALL_SIZE / 2.f,
 	};
 	ballvel.y = randfloat() * 2.f - 1.f;
-	ballvel.y *= 0.95;
+	ballvel.y *= 0.8;
 	ballvel.x = 1.0 - ballvel.y;
 	ballvel = Vector2Normalize(ballvel);
 	ballvel = Vector2Scale(ballvel, BALL_VEL);
@@ -129,6 +130,8 @@ void update()
 			ballvel.x = abs(1.0 - ballvel.y);
 			ballvel = Vector2Normalize(ballvel);
 			ballvel = Vector2Scale(ballvel, fmin(BALL_MAX_VEL, BALL_VEL + BOUNCE_VEL_INCREASE * bouncecount++));
+			if (bouncecount > bouncerecord)
+				bouncerecord = bouncecount;
 		}
 	} else if (ballpos.x > ENEMY_X && ballpos.x < ENEMY_X + PADDLE_WIDTH / 2.f) {
 		Rectangle er = {
@@ -148,6 +151,8 @@ void update()
 			ballvel.x = -abs(1.0 - ballvel.y);
 			ballvel = Vector2Normalize(ballvel);
 			ballvel = Vector2Scale(ballvel, fmin(BALL_MAX_VEL, BALL_VEL + BOUNCE_VEL_INCREASE * bouncecount++));
+			if (bouncecount > bouncerecord)
+				bouncerecord = bouncecount;
 		}
 	} else if (ballpos.x < 0.f || ballpos.x > SCREEN_WIDTH) {
 		reset_state();
@@ -183,6 +188,12 @@ int main(void)
 		DrawRectangle(pos.x, pos.y, PADDLE_WIDTH, PADDLE_HEIGHT, BLACK);
 		DrawRectangle(enemypos.x, enemypos.y, PADDLE_WIDTH, PADDLE_HEIGHT, BLACK);
 		DrawRectangle(ballpos.x, ballpos.y, BALL_SIZE, BALL_SIZE, BLACK);
+
+		char buf[1024];
+		sprintf(buf, "Bounces: %d", bouncecount);
+		DrawText(buf, 20, 20, 20, BLACK);
+		sprintf(buf, "Record: %d", bouncerecord);
+		DrawText(buf, 200, 20, 20, BLACK);
 
 		EndDrawing();
 	}
