@@ -7,9 +7,6 @@
 #include <raylib.h>
 #include <raymath.h>
 
-#include "stb_ds.h"
-
-
 /* some useful global constants */
 #define VEC2_DOWN   ((Vector2) {  0.f,  1.f })
 #define VEC2_UP     ((Vector2) {  0.f, -1.f })
@@ -203,5 +200,3 @@ int main(void)
 	return 0;
 }
 
-#define STB_DS_IMPLEMENTATION
-#include "stb_ds.h"
