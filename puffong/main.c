@@ -18,7 +18,7 @@
 
 
 /* game specific global constants */ 
-#define GAME_TITLE "puffong"
+#define GAME_TITLE "dong"
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 
@@ -33,8 +33,9 @@
 #define BALL_SIZE 16
 #define PAUSE_DURATION 1.0
 
-#define BALL_VEL 500.f
-#define BOUNCE_VEL_INCREASE 50.f
+#define BALL_VEL 800.f
+#define BOUNCE_VEL_INCREASE 100.f
+#define BALL_MAX_VEL 8000.f
 
 
 /* project source files */
@@ -127,7 +128,7 @@ void update()
 			ballvel.y = calculate_ball_y_vel(pos, ballpos);
 			ballvel.x = abs(1.0 - ballvel.y);
 			ballvel = Vector2Normalize(ballvel);
-			ballvel = Vector2Scale(ballvel, BALL_VEL + BOUNCE_VEL_INCREASE * bouncecount++);
+			ballvel = Vector2Scale(ballvel, fmin(BALL_MAX_VEL, BALL_VEL + BOUNCE_VEL_INCREASE * bouncecount++));
 		}
 	} else if (ballpos.x > ENEMY_X && ballpos.x < ENEMY_X + PADDLE_WIDTH / 2.f) {
 		Rectangle er = {
@@ -146,7 +147,7 @@ void update()
 			ballvel.y = calculate_ball_y_vel(enemypos, ballpos);
 			ballvel.x = -abs(1.0 - ballvel.y);
 			ballvel = Vector2Normalize(ballvel);
-			ballvel = Vector2Scale(ballvel, BALL_VEL + BOUNCE_VEL_INCREASE * bouncecount++);
+			ballvel = Vector2Scale(ballvel, fmin(BALL_MAX_VEL, BALL_VEL + BOUNCE_VEL_INCREASE * bouncecount++));
 		}
 	} else if (ballpos.x < 0.f || ballpos.x > SCREEN_WIDTH) {
 		reset_state();
